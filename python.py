@@ -7,6 +7,7 @@ topics = [
 
 
 ]
+
 @app.route('/')
 def index():
     liTags = ''
