@@ -2,9 +2,16 @@ import pyrebase
 import json
 import os
 import datetime
+import firebase_admin
+from firebase_admin import credentials, db
 
 base_dir = os.path.abspath(os.path.dirname(__file__))
 auth_path = os.path.join(base_dir, "auth", "firebaseAuth.json")
+cred_path = os.path.join(base_dir, "firebase-adminsdk.json")
+cred = credentials.Certificate(cred_path)
+firebase_admin.initialize_app(cred, {
+    "databaseURL": "https://khuthon-ff826-default-rtdb.asia-southeast1.firebasedatabase.app/"
+})
 
 class DBModule:
     def __init__(self):
@@ -154,52 +161,35 @@ class DBModule:
             print(f"게시글 멤버 추가 실패: {e}")
             return None
         
-    def create_chatroom(self, pid, host_uid):
+    def create_chatroom(self, pid):
         db = self.firebase.database()
         try:
-            # 1. 채팅방 데이터 (초기에는 방장만 포함)
+            # 1. 해당 게시글의 멤버 리스트 불러오기
+            member_data = db.child("posts").child(pid).child("member").get()
+            if member_data.val():
+                members = member_data.val()
+            else:
+                members = []  # 멤버가 없을 경우 빈 리스트
+
+            # 2. 채팅방 데이터 구성
             chatroom_data = {
                 "pid": pid,
-                "members": [host_uid],
+                "members": members,         # ← 모든 멤버 포함
                 "messages": []
             }
 
-            # 2. chatrooms에 push
+            # 3. chatrooms에 push
             new_chatroom_ref = db.child("chatrooms").push(chatroom_data)
             chatroom_id = new_chatroom_ref['name']
 
-            # 3. 게시글에 chatroom_id 저장
+            # 4. 해당 게시글에 chatroom_id 추가
             db.child("posts").child(pid).update({"chatroom_id": chatroom_id})
 
             return chatroom_id
         except Exception as e:
             print(f"채팅방 생성 실패: {e}")
             return None
-
-    def add_member_to_chatroom(self, pid, new_uid):
-        db = self.firebase.database()
-        try:
-            # 1. 해당 게시글에서 chatroom_id 가져오기
-            post = db.child("posts").child(pid).get()
-            chatroom_id = post.val().get("chatroom_id")
-
-            if not chatroom_id:
-                print("chatroom_id 없음")
-                return False
-
-            # 2. 현재 members 불러오기
-            members_data = db.child("chatrooms").child(chatroom_id).child("members").get()
-            members = members_data.val() or []
-
-            if new_uid not in members:
-                members.append(new_uid)
-                db.child("chatrooms").child(chatroom_id).update({"members": members})
         
-            return True
-        except Exception as e:
-            print(f"채팅방 멤버 추가 실패: {e}")
-            return False
-
     def send_message(self, chatroom_id, sender_uid, content):
         db = self.firebase.database()
         message_data = {
@@ -248,78 +238,6 @@ class DBModule:
         except Exception as e:
             print(f"게시글 검색 실패: {e}")
             return {}
-
+        
     def _get_timestamp(self):
         return datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    
-    def write_todo_list(self, uid, new_task):
-        db = self.firebase.database()
-        try:
-            # 1. 현재 사용자의 todo 리스트 가져오기
-            todo_ref = db.child("users").child(uid).child("todo")
-            existing_todo = todo_ref.get()
-
-            # 2. 다음 인덱스 계산 (기존 항목 수 or 0)
-            if existing_todo.val():
-                next_index = str(len(existing_todo.val()))
-            else:
-                next_index = "0"
-
-            # 3. 새 항목 추가
-            todo_ref.child(next_index).set(new_task)
-            return True
-        except Exception as e:
-            print(f"[write_todo_list] 에러: {e}")
-            return False
-
-    def to_do_list(self, pid):
-        db = self.firebase.database()
-
-        try:
-            # 1. 해당 게시글의 멤버 목록 가져오기
-            member_ref = db.child("posts").child(pid).child("member")
-            member_data = member_ref.get()
-            if not member_data.val():
-                return []
-
-            members = member_data.val()  # uid 리스트
-            result = []
-
-            # 2. 각 멤버의 ToDoList 가져오기
-            for uid in members:
-                user_todo_ref = db.child("users").child(uid).child("todo")
-                todo_data = user_todo_ref.get()
-
-                if todo_data.val():
-                    result.append({
-                        "uid": uid,
-                        "todo": todo_data.val()
-                    })
-
-            return result
-    
-        except Exception as e:
-            print(f"[to_do_list] 에러: {e}")
-            return []
-        
-    def add_calendar_event(self, pid, date, event): #캘린더 일정 추가
-        db = self.firebase.database()
-        try:
-            db.child("calendar").child(pid).child(date).set(event)
-            return True
-        except Exception as e:
-            print(f"[add_calendar_event] 에러: {e}")
-            return False
-
-    def get_calendar_events(self, pid):
-        db = self.firebase.database()
-        try:
-            events = db.child("calendar").child(pid).get()
-            if events.val():
-                return events.val()
-            else:
-                return {}
-        except Exception as e:
-            print(f"[get_calendar_events] 에러: {e}")
-            return {}
-

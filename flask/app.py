@@ -1,12 +1,6 @@
 from flask import Flask, redirect, render_template, request, url_for, jsonify
 from DB_handler import DBModule
 from flask_cors import CORS
-import firebase_admin
-from firebase_admin import credentials
-cred = credentials.Certificate("auth/firebaseKey.json")
-firebase_admin.initialize_app(cred, {
-    'databaseURL': 'https://your-project-id.firebaseio.com'
-})
 DB = DBModule()
 
 app = Flask(__name__)
@@ -25,7 +19,7 @@ def post(pid):
         return jsonify({"result": "fail"}), 400
 
 
-@app.route("/login", methods = ["POST"]) # 로그인
+@app.route("/login", methods = []) # 로그인
 def login():
     data = request.get_json()
     id = data.get("id")
@@ -76,7 +70,7 @@ def write():
         return jsonify({"result": "success", "pid": pid}), 200
     else:
         return jsonify({"result": "fail"}), 400
-
+    
 @app.route("/search", methods=["POST"]) # 게시글 검색(제목)
 def search(): 
     data = request.get_json()
@@ -100,46 +94,6 @@ def send_chat_message():
     else:
         return jsonify({"result": "fail"}), 400
 
-@app.route("/todo/add", methods=["POST"]) #to do list 추가
-def add_todo():
-    data = request.get_json()
-    uid = data.get("uid")
-    task = data.get("task")
-
-    if not uid or not task:
-        return jsonify({"result": "fail", "message": "uid 또는 task 누락"}), 400
-
-    success = DB.write_todo_list(uid, task)
-    if success:
-        return jsonify({"result": "success", "message": "할 일 추가 완료"}), 200
-    else:
-        return jsonify({"result": "fail", "message": "서버 오류"}), 500
-
-@app.route("/todo/group/<pid>", methods=["GET"]) #group member to do list 보기
-def get_group_todo(pid):
-    result = DB.to_do_list(pid)
-    return jsonify({"result": "success", "data": result}), 200
-
-@app.route("/calendar/add", methods=["POST"])
-def calendar_add():
-    data = request.get_json()
-    pid = data.get("pid")
-    date = data.get("date")  # 형식: YYYY-MM-DD
-    event = data.get("event")
-
-    if not pid or not date or not event:
-        return jsonify({"result": "fail", "message": "필수 항목 누락"}), 400
-
-    success = DB.add_calendar_event(pid, date, event)
-    if success:
-        return jsonify({"result": "success", "message": "일정 등록 완료"}), 200
-    else:
-        return jsonify({"result": "fail", "message": "등록 실패"}), 500
-
-@app.route("/calendar/<pid>", methods=["GET"])
-def calendar_get(pid):
-    data = DB.get_calendar_events(pid)
-    return jsonify({"result": "success", "data": data}), 200
 
 if __name__ == "__main__":
     app.run(host = "0.0.0.0", port=5000, debug=True)
