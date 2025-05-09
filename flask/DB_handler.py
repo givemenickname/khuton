@@ -61,6 +61,8 @@ class DBModule:
         except Exception as e:
             print(f"Failed to write post: {e}")
 
+            
+
     def post_list(self):
         pass
 
