@@ -86,7 +86,7 @@ class DBModule:
             print(f"Failed to write post: {e}")
             return None
 
-    def get_post(self):
+    def get_post(self): #전체 게시글 불러오기
         db = self.firebase.database()
         try:
             posts = db.child("posts").get()
@@ -97,6 +97,19 @@ class DBModule:
         except Exception as e:
             print(f"게시글 불러오기 실패: {e}")
             return {}
+        
+    def get_post_by_pid(self, pid): # PID로 게시글 불러오기
+        db = self.firebase.database()
+        try:
+            post_data = db.child("posts").child(pid).get()
+            if post_data.val():
+                return post_data.val()  # 딕셔너리 형태로 반환
+            else:
+                return None  # 해당 PID 없음
+        except Exception as e:
+            print(f"게시글 불러오기 실패: {e}")
+            return None
+        
     def write_comment(self, pid, user, content):
         db = self.firebase.database()
         comment_data = {

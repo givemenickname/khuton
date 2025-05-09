@@ -11,7 +11,7 @@ def index():
 
 @app.route("/post/<int:pid>") #pid 기반으로 게시글 정보 가져오기
 def post(pid):
-    data = DB.get_post(pid)
+    data = DB.get_post_by_pid(pid)
     if data:
         return jsonify({"result": "success", "data": data}), 200
     else:
