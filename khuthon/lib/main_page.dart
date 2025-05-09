@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'post_detail_screen.dart';
 import 'post_create.dart';
+import 'chat_list.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -205,6 +206,10 @@ class _MainScreenState extends State<MainScreen> {
                     tooltip: '댓글',
                     onPressed: () {
                       print('댓글 아이콘 클릭됨');
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => PostListPage()),
+                      );
                     },
                   ),
                   SizedBox(height: 20),
