@@ -200,7 +200,43 @@ class DBModule:
         except Exception as e:
             print(f"사용자 정보 불러오기 실패: {e}")
             return None
+    def apply_to_post(self, pid, user):
+        db = self.firebase.database()
+        uid = user["localId"]
 
+        try:
+            db.child("posts").child(pid).child("requests").child(uid).set({
+                "uid": uid,
+                "username": user.get("name", "익명"),
+                "applied_at": self._get_timestamp()
+            })
+            return True
+        except Exception as e:
+            print(f"참가 신청 실패: {e}")
+            return False
+        
+    def accept_join_request(self, pid, user):
+        db = self.firebase.database()
+        uid = user["localId"]
+
+        try:
+            # joinList에 추가
+            db.child("posts").child(pid).child("joinList").child(uid).set({
+                "uid": uid,
+                "username": user.get("name", "익명"),
+                "joined_at": self._get_timestamp()
+            })
+
+            # 사용자 데이터에도 추가
+            db.child("users").child(uid).child("joinedPosts").push(pid)
+
+            # 요청 목록에서는 제거 (선택사항)
+            db.child("posts").child(pid).child("requests").child(uid).remove()
+
+            return True
+        except Exception as e:
+            print(f"참가 수락 실패: {e}")
+            return False
     def search_post(self, keyword):
         db = self.firebase.database()
         try:
