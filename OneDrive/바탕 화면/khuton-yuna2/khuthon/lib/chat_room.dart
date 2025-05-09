@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:khuthon/calendar_page.dart';
+import 'package:khuthon/todo_list_page.dart';
 
 class ChatRoomPage extends StatelessWidget {
   @override
@@ -18,9 +20,9 @@ class ChatRoomPage extends StatelessWidget {
                     content: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        _popupBox('할일 리스트'),
+                        _popupButton(context, '할일 리스트', ToDoListPage()),
                         SizedBox(height: 12),
-                        _popupBox('공유 캘린더'),
+                        _popupButton(context, '공유 캘린더', CalendarPage()), // 추후 구현
                       ],
                     ),
                     actions: [
@@ -49,6 +51,28 @@ class ChatRoomPage extends StatelessWidget {
           ),
           _chatInputField(),
         ],
+      ),
+    );
+  }
+
+  Widget _popupButton(BuildContext context, String label, Widget page) {
+    return InkWell(
+      onTap: () {
+        Navigator.pop(context); // 팝업 먼저 닫기
+        Navigator.push(context, MaterialPageRoute(builder: (_) => page));
+      },
+      child: Container(
+        width: double.infinity,
+        padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+        decoration: BoxDecoration(
+          color: Colors.green[50],
+          border: Border.all(color: Colors.green),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+        ),
       ),
     );
   }

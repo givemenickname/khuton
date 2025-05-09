@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'main_page.dart';
 
 class PostCreatePage extends StatelessWidget {
   const PostCreatePage({super.key});
@@ -16,7 +17,13 @@ class PostCreatePage extends StatelessWidget {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (_) => MainScreen()),
+                  (route) => false,
+            );
+          },
         ),
       ),
       body: Padding(
@@ -24,8 +31,20 @@ class PostCreatePage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text("제목을 입력하세요.",
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            const Text(
+              "제목",
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            TextField(
+              controller: titleController,
+              decoration: const InputDecoration(
+                filled: true,
+                fillColor: Colors.white,
+                border: OutlineInputBorder(),
+                hintText: "제목을 입력하세요.",
+              ),
+            ),
             const Divider(height: 32),
             const Text("본문을 입력하세요."),
             const SizedBox(height: 12),
