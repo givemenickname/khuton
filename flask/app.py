@@ -1,7 +1,12 @@
 from flask import Flask, redirect, render_template, request, url_for, jsonify
 from DB_handler import DBModule
 from flask_cors import CORS
-
+import firebase_admin
+from firebase_admin import credentials
+cred = credentials.Certificate("auth/firebaseKey.json")
+firebase_admin.initialize_app(cred, {
+    'databaseURL': 'https://your-project-id.firebaseio.com'
+})
 DB = DBModule()
 
 app = Flask(__name__)

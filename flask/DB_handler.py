@@ -154,35 +154,52 @@ class DBModule:
             print(f"게시글 멤버 추가 실패: {e}")
             return None
         
-    def create_chatroom(self, pid):
+    def create_chatroom(self, pid, host_uid):
         db = self.firebase.database()
         try:
-            # 1. 해당 게시글의 멤버 리스트 불러오기
-            member_data = db.child("posts").child(pid).child("member").get()
-            if member_data.val():
-                members = member_data.val()
-            else:
-                members = []  # 멤버가 없을 경우 빈 리스트
-
-            # 2. 채팅방 데이터 구성
+            # 1. 채팅방 데이터 (초기에는 방장만 포함)
             chatroom_data = {
                 "pid": pid,
-                "members": members,         # ← 모든 멤버 포함
+                "members": [host_uid],
                 "messages": []
             }
 
-            # 3. chatrooms에 push
+            # 2. chatrooms에 push
             new_chatroom_ref = db.child("chatrooms").push(chatroom_data)
             chatroom_id = new_chatroom_ref['name']
 
-            # 4. 해당 게시글에 chatroom_id 추가
+            # 3. 게시글에 chatroom_id 저장
             db.child("posts").child(pid).update({"chatroom_id": chatroom_id})
 
             return chatroom_id
         except Exception as e:
             print(f"채팅방 생성 실패: {e}")
             return None
+
+    def add_member_to_chatroom(self, pid, new_uid):
+        db = self.firebase.database()
+        try:
+            # 1. 해당 게시글에서 chatroom_id 가져오기
+            post = db.child("posts").child(pid).get()
+            chatroom_id = post.val().get("chatroom_id")
+
+            if not chatroom_id:
+                print("chatroom_id 없음")
+                return False
+
+            # 2. 현재 members 불러오기
+            members_data = db.child("chatrooms").child(chatroom_id).child("members").get()
+            members = members_data.val() or []
+
+            if new_uid not in members:
+                members.append(new_uid)
+                db.child("chatrooms").child(chatroom_id).update({"members": members})
         
+            return True
+        except Exception as e:
+            print(f"채팅방 멤버 추가 실패: {e}")
+            return False
+
     def send_message(self, chatroom_id, sender_uid, content):
         db = self.firebase.database()
         message_data = {
@@ -234,5 +251,7 @@ class DBModule:
         
     def _get_timestamp(self):
         return datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    
+
 
     
