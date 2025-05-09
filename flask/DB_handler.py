@@ -6,4 +6,4 @@ class DBModule:
         with open("./auth/firebase_config.json") as f:
             config = json.load(f)
 
-firebase = pyrebase
+        self.firebase = pyrebase.initialize_app(config)
