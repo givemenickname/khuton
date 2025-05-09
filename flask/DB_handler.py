@@ -1,9 +1,13 @@
 import pyrebase
 import json
+import os
+
+base_dir = os.path.abspath(os.path.dirname(__file__))
+auth_path = os.path.join(base_dir, "auth", "firebaseAuth.json")
 
 class DBModule:
     def __init__(self):
-        with open("./auth/firebase_config.json") as f:
+        with open(auth_path) as f:
             config = json.load(f)
 
         self.firebase = pyrebase.initialize_app(config)
