@@ -59,12 +59,13 @@ def user(uid):
 @app.route("/write", methods=["POST"])
 def write():
     data = request.get_json()
-    uid = data.get("uid")
+    author_uid = data.get("author_uid")
     title = data.get("title")
     contents = data.get("contents")
     capacity = data.get("capacity")
     state = data.get("state", "open")
-    pid = DB.write_post(uid, title, contents, capacity, state)
+    timestamp = data.get("timestamp", None)
+    pid = DB.write_post(author_uid, title, contents, capacity, state, timestamp)
     if pid:
         return jsonify({"result": "success", "pid": pid}), 200
     else:
