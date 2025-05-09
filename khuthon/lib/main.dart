@@ -3,11 +3,11 @@ import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized(); // Firebase 초기화 전 필수
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform, // ← 여기!
-  );
-  runApp(const MyApp());
+  WidgetsFlutterBinding.ensureInitialized();
+await Firebase.initializeApp(
+  options: DefaultFirebaseOptions.currentPlatform,
+);
+runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
