@@ -1,9 +1,11 @@
 from flask import Flask, redirect, render_template, request, url_for, jsonify
 from DB_handler import DBModule
+from flask_cors import CORS
 
 DB = DBModule()
 
 app = Flask(__name__)
+CORS(app)
 
 @app.route('/')
 def index():
@@ -18,7 +20,7 @@ def post(pid):
         return jsonify({"result": "fail"}), 400
 
 
-@app.route("/login") # 로그인
+@app.route("/login", methods = ["POST"]) # 로그인
 def login():
     data = request.get_json()
     id = data.get("id")
@@ -95,4 +97,4 @@ def send_chat_message():
 
 
 if __name__ == "__main__":
-    app.run(host = "0.0.0.0", debug=True)
+    app.run(host = "0.0.0.0", port=5000, debug=True)

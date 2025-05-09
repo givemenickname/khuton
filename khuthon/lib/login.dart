@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'register.dart';
 import 'main_page.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 
 class LoginPage extends StatelessWidget {
@@ -8,6 +10,66 @@ class LoginPage extends StatelessWidget {
   final TextEditingController pwController = TextEditingController();
 
   LoginPage({super.key});
+
+  Future<void> attemptLogin(BuildContext context) async {
+    final id = idController.text.trim();
+    final pw = pwController.text.trim();
+
+    final url = Uri.parse("http://172.21.110.186:5000/login"); // ← 너의 PC IP 주소로 변경
+    try {
+      final response = await http.post(
+        url,
+        headers: {"Content-Type": "application/json"},
+        body: json.encode({
+          "id": id,
+          "password": pw,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        final uid = data['uid'];
+        print("로그인 성공: UID = $uid");
+
+        // 메인 화면으로 이동
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => MainScreen()),
+        );
+      } else {
+        print("로그인 실패: ${response.body}");
+        showDialog(
+          context: context,
+          builder: (_) => AlertDialog(
+            title: Text("로그인 실패"),
+            content: Text("아이디 또는 비밀번호를 확인하세요."),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text("확인"),
+              )
+            ],
+          ),
+        );
+      }
+    } catch (e) {
+      print("오류 발생: $e");
+      showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          title: Text("에러"),
+          content: Text("서버에 연결할 수 없습니다."),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text("확인"),
+            )
+          ],
+        ),
+      );
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -48,10 +110,7 @@ class LoginPage extends StatelessWidget {
                   ElevatedButton(
                     onPressed: () {
                       // 로그인 검증 로직 추가 가능
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(builder: (_) => MainScreen()),
-                      );
+                      attemptLogin(context);
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.lightGreen[200],
