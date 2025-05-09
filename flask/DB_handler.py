@@ -57,11 +57,19 @@ class DBModule:
             "state": state,
             "author_uid": uid,
             "timestamp": time.time(),
+            "comment": [],
             }
             new_post_ref = db.child("posts").push(post_data)
             pid = new_post_ref['name']
 
             db.child("posts").child(pid).update({"pid": pid})
+
+            user_posts_reg = db.child("users").child(uid).child("posts")
+            user_posts = user_posts_reg.get().val()
+            if user_posts is None:
+                user_posts = []
+            user_posts.append(pid)
+            user_posts_reg.set(user_posts)
             return pid
         except Exception as e:
             print(f"Failed to write post: {e}")
