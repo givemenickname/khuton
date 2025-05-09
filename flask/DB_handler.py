@@ -9,9 +9,7 @@ base_dir = os.path.abspath(os.path.dirname(__file__))
 auth_path = os.path.join(base_dir, "auth", "firebaseAuth.json")
 cred_path = os.path.join(base_dir, "firebase-adminsdk.json")
 cred = credentials.Certificate(cred_path)
-firebase_admin.initialize_app(cred, {
-    "databaseURL": "https://khuthon-ff826-default-rtdb.asia-southeast1.firebasedatabase.app/"
-})
+
 
 class DBModule:
     def __init__(self):
@@ -230,14 +228,18 @@ class DBModule:
             if posts.each():
                 result = {}
                 for post in posts.each():
-                    if keyword in post.val()["title"]:
-                        result[post.key()] = post.val()
+                    post_data = post.val()
+                    title = post_data.get("title", "")
+                    content = post_data.get("content", "")
+                    if keyword in title or keyword in content:
+                        result[post.key()] = post_data
                 return result
             else:
-                return {}  # 게시글이 하나도 없는 경우
+                return {}
         except Exception as e:
             print(f"게시글 검색 실패: {e}")
             return {}
+
     def to_do_list(self, pid):
         db = self.firebase.database()
 

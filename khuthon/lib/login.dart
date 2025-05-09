@@ -15,7 +15,7 @@ class LoginPage extends StatelessWidget {
     final id = idController.text.trim();
     final pw = pwController.text.trim();
 
-    final url = Uri.parse("http://172.21.110.186:5000/login"); // ← 너의 PC IP 주소로 변경
+    final url = Uri.parse("http://172.21.65.64:5030/login"); // ← 너의 PC IP 주소로 변경
     try {
       final response = await http.post(
         url,
