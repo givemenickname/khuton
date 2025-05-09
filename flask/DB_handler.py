@@ -12,20 +12,47 @@ class DBModule:
 
         self.firebase = pyrebase.initialize_app(config)
 
-        def login(self, id, password):
-            pass
+    def login(self, id, password):
+        auth = self.firebase.auth()
+        try:
+            user = auth.sign_in_with_email_and_password(id, password)
+            return user
+        except Exception as e:
+            print(f"Login failed: {e}")
+            return None
 
-        def signin(self, id, password, name, gender, birth, address, mbti, plant):
-            pass
+    def signin(self, id, password, name, gender, birth, address, mbti, plant):
+        auth = self.firebase.auth()
+        db = self.firebase.database()
 
-        def write_post(self, user, contents, capacity):
-            pass
+        try:
+            user = auth.create_user_with_email_and_password(id, password)
+            uid = user['localId']
+            user_data = {
+                "name": name,
+                "email": id,
+                "gender" : gender,
+                "birth" : birth,
+                "address" : address,
+            }
+            if mbti:
+                user_data["mbti"] = mbti
+            if plant:
+                user_data["plant"] = plant
 
-        def post_list(self):
-            pass
+            db.child("users").child(uid).set(user_data)
+            return True
+        except:
+            return False
 
-        def post_detail(self, pid):
-            pass
+    def write_post(self, user, contents, capacity):
+        pass
 
-        def get_user(self, uid):
-            pass
+    def post_list(self):
+        pass
+
+    def post_detail(self, pid):
+        pass
+
+    def get_user(self, uid):
+        pass
