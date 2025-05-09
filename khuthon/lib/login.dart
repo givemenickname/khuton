@@ -5,6 +5,8 @@ class LoginPage extends StatelessWidget {
   final TextEditingController idController = TextEditingController();
   final TextEditingController pwController = TextEditingController();
 
+  LoginPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
