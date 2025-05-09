@@ -18,11 +18,7 @@ class PostCreatePage extends StatelessWidget {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () {
-            Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (_) => const MainScreen()),
-              (route) => false,
-            );
+            Navigator.pop(context); // 뒤로가기
           },
         ),
       ),
@@ -46,15 +42,19 @@ class PostCreatePage extends StatelessWidget {
               ),
             ),
             const Divider(height: 32),
-            const Text("본문을 입력하세요."),
-            const SizedBox(height: 12),
+            const Text(
+              "본문",
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
             TextField(
               controller: contentController,
-              maxLines: 4,
+              maxLines: 5,
               decoration: const InputDecoration(
                 filled: true,
                 fillColor: Colors.white,
                 border: OutlineInputBorder(),
+                hintText: "본문을 입력하세요.",
               ),
             ),
             const SizedBox(height: 32),
@@ -71,22 +71,30 @@ class PostCreatePage extends StatelessWidget {
                       filled: true,
                       fillColor: Colors.white,
                       border: OutlineInputBorder(),
+                      hintText: "예: 10",
                     ),
                   ),
                 ),
                 const SizedBox(width: 12),
                 ElevatedButton(
                   onPressed: () {
-                    // TODO: 글 등록 처리
-                    print("📨 글 등록됨");
-                    Navigator.pop(context);
+                    final String title = titleController.text.trim();
+                    final String people = maxPeopleController.text.trim();
+
+                    if (title.isEmpty || people.isEmpty) return;
+
+                    Navigator.pop(context, {
+                      'title': title,
+                      'people': '0/$people명',
+                      'isMine': true,
+                      'status': '모집 중',
+                    });
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
                     elevation: 2,
                   ),
-                  child:
-                      const Text("등록", style: TextStyle(color: Colors.black)),
+                  child: const Text("등록", style: TextStyle(color: Colors.black)),
                 )
               ],
             )
