@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'register.dart';
 import 'main_page.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class LoginPage extends StatelessWidget {
   final TextEditingController idController = TextEditingController();
@@ -46,12 +48,26 @@ class LoginPage extends StatelessWidget {
                     child: Text('로그인'),
                   ),*/
                   ElevatedButton(
-                    onPressed: () {
-                      // 로그인 검증 로직 추가 가능
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(builder: (context) => MainScreen()),
+                    onPressed: () async {
+                      final url = Uri.parse('http://172.21.87.83:5000/login');
+                      final response = await http.post(
+                        url,
+                        headers: {'Content-Type': 'application/json'},
+                        body: jsonEncode({
+                          "id": idController.text,
+                          "password": pwController.text,
+                        }),
                       );
+
+                      final result = jsonDecode(response.body);
+                      if (result['result'] == 'success') {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (_) => MainScreen()),
+                        );
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('로그인 실패')));
+                      }
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.lightGreen[200],

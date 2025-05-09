@@ -2,6 +2,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'screens/post_detail_screen.dart';
 import 'screens/my_post_detail_screen.dart';
+import 'post_create.dart';
+import 'notification_page.dart';
+import 'screens/chat_list_page.dart';
 
 void main() => runApp(MyApp());
 
@@ -195,7 +198,12 @@ class _MainScreenState extends State<MainScreen> {
                   child: Icon(Icons.search),
                 ),
                 FloatingActionButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => PostCreatePage()),
+                    );
+                  },
                   child: Icon(Icons.edit),
                 ),
               ],
@@ -228,7 +236,13 @@ class _MainScreenState extends State<MainScreen> {
                     iconSize: 30,
                     tooltip: '댓글',
                     onPressed: () {
-                      print('댓글 아이콘 클릭됨');
+                      setState(() {
+                        _isMenuOpen = false; // 사이드 메뉴 닫기
+                      });
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => PostListPage()),
+                      );
                     },
                   ),
                   SizedBox(height: 20),
@@ -237,7 +251,13 @@ class _MainScreenState extends State<MainScreen> {
                     iconSize: 30,
                     tooltip: '알림',
                     onPressed: () {
-                      print('알림 아이콘 클릭됨');
+                      setState(() {
+                        _isMenuOpen = false; // 메뉴 닫기
+                      });
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const NotificationPage()),
+                      );
                     },
                   ),
                   SizedBox(height: 20),

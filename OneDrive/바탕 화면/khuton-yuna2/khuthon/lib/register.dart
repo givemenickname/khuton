@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -60,19 +62,19 @@ class _RegisterPageState extends State<RegisterPage> {
                 dropdown(
                   year,
                   List.generate(100, (i) => (1925 + i).toString()),
-                  (v) => setState(() => year = v),
+                      (v) => setState(() => year = v),
                 ),
                 SizedBox(width: 10),
                 dropdown(
                   month,
                   List.generate(12, (i) => (i + 1).toString()),
-                  (v) => setState(() => month = v),
+                      (v) => setState(() => month = v),
                 ),
                 SizedBox(width: 10),
                 dropdown(
                   day,
                   List.generate(31, (i) => (i + 1).toString()),
-                  (v) => setState(() => day = v),
+                      (v) => setState(() => day = v),
                 ),
               ],
             ),
@@ -83,42 +85,64 @@ class _RegisterPageState extends State<RegisterPage> {
             Wrap(
               spacing: 6,
               children:
-                  [
-                    'E',
-                    'I',
-                  ].map((e) => choiceChip(e, mbti1, (v) => mbti1 = v)).toList(),
+              [
+                'E',
+                'I',
+              ].map((e) => choiceChip(e, mbti1, (v) => mbti1 = v)).toList(),
             ),
             Wrap(
               spacing: 6,
               children:
-                  [
-                    'N',
-                    'S',
-                  ].map((e) => choiceChip(e, mbti2, (v) => mbti2 = v)).toList(),
+              [
+                'N',
+                'S',
+              ].map((e) => choiceChip(e, mbti2, (v) => mbti2 = v)).toList(),
             ),
             Wrap(
               spacing: 6,
               children:
-                  [
-                    'F',
-                    'T',
-                  ].map((e) => choiceChip(e, mbti3, (v) => mbti3 = v)).toList(),
+              [
+                'F',
+                'T',
+              ].map((e) => choiceChip(e, mbti3, (v) => mbti3 = v)).toList(),
             ),
             Wrap(
               spacing: 6,
               children:
-                  [
-                    'P',
-                    'J',
-                  ].map((e) => choiceChip(e, mbti4, (v) => mbti4 = v)).toList(),
+              [
+                'P',
+                'J',
+              ].map((e) => choiceChip(e, mbti4, (v) => mbti4 = v)).toList(),
             ),
             SizedBox(height: 16),
             buildField('선호 농작물', cropController),
             SizedBox(height: 24),
             Center(
               child: ElevatedButton(
-                onPressed: () {
-                  print("가입 정보: 아이디=${idController.text}, MBTI=$fullMBTI");
+                onPressed: () async {
+                  final url = Uri.parse('http://<YOUR_FLASK_SERVER_IP>:5000/signin');
+                  final response = await http.post(
+                    url,
+                    headers: {'Content-Type': 'application/json'},
+                    body: jsonEncode({
+                      "id": idController.text,
+                      "password": pwController.text,
+                      "name": nameController.text,
+                      "gender": gender,
+                      "birth": "$year-$month-$day",
+                      "address": addressController.text,
+                      "mbti": fullMBTI,
+                      "plant": cropController.text,
+                    }),
+                  );
+
+                  final result = jsonDecode(response.body);
+                  if (result['result'] == 'success') {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('회원가입 성공!')));
+                    Navigator.pop(context); // 로그인 페이지로 돌아감
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('회원가입 실패')));
+                  }
                 },
                 child: Text('완료'),
               ),
@@ -130,10 +154,10 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   Widget buildField(
-    String label,
-    TextEditingController controller, {
-    bool obscure = false,
-  }) {
+      String label,
+      TextEditingController controller, {
+        bool obscure = false,
+      }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12.0),
       child: TextField(
@@ -150,10 +174,10 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   Widget choiceChip(
-    String label,
-    String groupValue,
-    void Function(String) onSelected,
-  ) {
+      String label,
+      String groupValue,
+      void Function(String) onSelected,
+      ) {
     return ChoiceChip(
       label: Text(label),
       selected: groupValue == label,
@@ -162,14 +186,14 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   Widget dropdown(
-    String value,
-    List<String> items,
-    ValueChanged<String> onChanged,
-  ) {
+      String value,
+      List<String> items,
+      ValueChanged<String> onChanged,
+      ) {
     return DropdownButton<String>(
       value: items.contains(value) ? value : null,
       items:
-          items.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
+      items.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
       onChanged: (v) {
         if (v != null) onChanged(v);
       },
