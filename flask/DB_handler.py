@@ -1,6 +1,7 @@
 import pyrebase
 import json
 import os
+import datetime
 
 base_dir = os.path.abspath(os.path.dirname(__file__))
 auth_path = os.path.join(base_dir, "auth", "firebaseAuth.json")
@@ -45,8 +46,20 @@ class DBModule:
         except:
             return False
 
-    def write_post(self, user, contents, capacity):
-        pass
+    def write_post(self, uid, title, contents, capacity):
+        post_data = {
+            "uid": uid,
+            "title" : title,
+            "contents": contents,
+            "capacity": capacity,
+            "createdAt": datetime.datetime.now().isoformat()
+        }
+
+        try:
+            self.db.child("posts").push(post_data)
+            print("Post successfully written.")
+        except Exception as e:
+            print(f"Failed to write post: {e}")
 
     def post_list(self):
         pass
@@ -54,14 +67,5 @@ class DBModule:
     def post_detail(self, pid):
         pass
 
-    def get_user(self, uid): #데이터 베이스에서 user 정보 받아오기
-        db = self.firebase.database()
-        try:
-            user_data = db.child("users").child(uid).get()
-            if user_data.val():
-                return user_data.val()
-            else:
-                return None 
-        except Exception as e:
-            print(f"Error fetching user data: {e}")
-            return None
+    def get_user(self, uid):
+        pass
