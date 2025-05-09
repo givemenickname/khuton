@@ -79,6 +79,20 @@ def search():
         return jsonify({"result": "success", "posts": posts}), 200
     else:
         return jsonify({"result": "fail"}), 400
+    
+@app.route("/chat/send", methods=["POST"])
+def send_chat_message():
+    data = request.get_json()
+    chatroom_id = data.get("chatroom_id")
+    sender_uid = data.get("sender_uid")
+    content = data.get("content")
+
+    success = DB.send_message(chatroom_id, sender_uid, content)
+    if success:
+        return jsonify({"result": "success"}), 200
+    else:
+        return jsonify({"result": "fail"}), 400
+
 
 if __name__ == "__main__":
     app.run(host = "0.0.0.0", debug=True)
