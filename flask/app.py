@@ -56,9 +56,19 @@ def user(uid):
     else:
         return jsonify({"result": "fail"}), 400
 
-@app.route("/write")
+@app.route("/write", methods=["POST"])
 def write():
-    pass
+    data = request.get_json()
+    uid = data.get("uid")
+    title = data.get("title")
+    contents = data.get("contents")
+    capacity = data.get("capacity")
+    state = data.get("state", "open")
+    pid = DB.write_post(uid, title, contents, capacity, state)
+    if pid:
+        return jsonify({"result": "success", "pid": pid}), 200
+    else:
+        return jsonify({"result": "fail"}), 400
 
 @app.route("/write_done", methods=["POST"])
 def write_done():
