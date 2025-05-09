@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'register.dart';
+import 'main_page.dart';
 
 class LoginPage extends StatelessWidget {
   final TextEditingController idController = TextEditingController();
@@ -33,9 +34,23 @@ class LoginPage extends StatelessWidget {
                   SizedBox(height: 12),
                   customTextField('비밀번호', pwController, obscure: true),
                   SizedBox(height: 12),
-                  ElevatedButton(
+/*                  ElevatedButton(
                     onPressed: () {
                       print('로그인: ${idController.text}');
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.lightGreen[200],
+                      minimumSize: Size.fromHeight(40),
+                    ),
+                    child: Text('로그인'),
+                  ),*/
+                  ElevatedButton(
+                    onPressed: () {
+                      // 로그인 검증 로직 추가 가능
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (_) => MainScreen()),
+                      );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.lightGreen[200],
