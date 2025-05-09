@@ -49,7 +49,7 @@ class LoginPage extends StatelessWidget {
                       // 로그인 검증 로직 추가 가능
                       Navigator.pushReplacement(
                         context,
-                        MaterialPageRoute(builder: (_) => MainScreen()),
+                        MaterialPageRoute(builder: (context) => MainScreen()),
                       );
                     },
                     style: ElevatedButton.styleFrom(

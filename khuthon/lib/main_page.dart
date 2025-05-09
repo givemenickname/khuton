@@ -8,7 +8,7 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  final PageController _pageController = PageController(initialPage: 1000);
+  final PageController _pageController = PageController(initialPage: 4);
   Timer? _timer;
   bool _isMenuOpen = false;
 
