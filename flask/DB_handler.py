@@ -86,7 +86,7 @@ class DBModule:
             print(f"Failed to write post: {e}")
             return None
 
-    def get_post(self):
+    def get_post(self): #전체 게시글 불러오기
         db = self.firebase.database()
         try:
             posts = db.child("posts").get()
@@ -97,6 +97,19 @@ class DBModule:
         except Exception as e:
             print(f"게시글 불러오기 실패: {e}")
             return {}
+        
+    def get_post_by_pid(self, pid): # PID로 게시글 불러오기
+        db = self.firebase.database()
+        try:
+            post_data = db.child("posts").child(pid).get()
+            if post_data.val():
+                return post_data.val()  # 딕셔너리 형태로 반환
+            else:
+                return None  # 해당 PID 없음
+        except Exception as e:
+            print(f"게시글 불러오기 실패: {e}")
+            return None
+        
     def write_comment(self, pid, user, content):
         db = self.firebase.database()
         comment_data = {
@@ -111,9 +124,8 @@ class DBModule:
             db.child("posts").child(pid).child("comments").push(comment_data)
             return True
         except Exception as e:
-            print(f"댓글 작성 실패: {e}")
-            return False
-
+            print(f"사용자 정보 불러오기 실패: {e}")
+            return None
     def apply_to_post(self, pid, user):
         db = self.firebase.database()
         uid = user["localId"]
@@ -151,7 +163,19 @@ class DBModule:
         except Exception as e:
             print(f"참가 수락 실패: {e}")
             return False
+    def search_post(self, keyword):
+        db = self.firebase.database()
+        try:
+            posts = db.child("posts").get()
+            if posts.each():
+                result = {}
+                for post in posts.each():
+                    if keyword in post.val()["title"]:
+                        result[post.key()] = post.val()
+                return result
+            else:
+                return {}  # 게시글이 하나도 없는 경우
+        except Exception as e:
+            print(f"게시글 검색 실패: {e}")
+            return {}
 
-
-
-   

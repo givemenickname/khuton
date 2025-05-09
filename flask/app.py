@@ -9,16 +9,16 @@ app = Flask(__name__)
 def index():
     pass
 
-@app.route("/post/<int:pid>")
+@app.route("/post/<int:pid>") #pid 기반으로 게시글 정보 가져오기
 def post(pid):
-    data = DB.get_post(pid)
+    data = DB.get_post_by_pid(pid)
     if data:
         return jsonify({"result": "success", "data": data}), 200
     else:
         return jsonify({"result": "fail"}), 400
 
 
-@app.route("/login")
+@app.route("/login") # 로그인
 def login():
     data = request.get_json()
     id = data.get("id")
@@ -30,7 +30,7 @@ def login():
     else:
         return jsonify({"result": "fail"}), 400
  
-@app.route("/signin", methods=["POST"])
+@app.route("/signin", methods=["POST"]) # 회원가입
 def signin():
     data = request.get_json()
     id = data.get("id")
@@ -48,7 +48,7 @@ def signin():
     else:
         return jsonify({"result": "fail"}), 400
 
-@app.route("/user/<uid>")
+@app.route("/user/<uid>")  # uid 기반으로 사용자 정보 가져오기
 def user(uid):
     data = DB.get_user(uid)
     if data:
@@ -56,7 +56,7 @@ def user(uid):
     else:
         return jsonify({"result": "fail"}), 400
 
-@app.route("/write", methods=["POST"])
+@app.route("/write", methods=["POST"]) # 게시글 작성
 def write():
     data = request.get_json()
     uid = data.get("uid")
@@ -67,6 +67,16 @@ def write():
     pid = DB.write_post(uid, title, contents, capacity, state)
     if pid:
         return jsonify({"result": "success", "pid": pid}), 200
+    else:
+        return jsonify({"result": "fail"}), 400
+    
+@app.route("/search", methods=["POST"]) # 게시글 검색(제목)
+def search(): 
+    data = request.get_json()
+    keyword = data.get("keyword")
+    posts = DB.search_post(keyword)
+    if posts:
+        return jsonify({"result": "success", "posts": posts}), 200
     else:
         return jsonify({"result": "fail"}), 400
 
