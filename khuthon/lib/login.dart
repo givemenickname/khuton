@@ -10,7 +10,6 @@ class LoginPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('✅ LoginPage 실행됨');
     return Scaffold(
       backgroundColor: Color(0xFFD7EEC6),
       body: Center(
@@ -47,6 +46,7 @@ class LoginPage extends StatelessWidget {
                   ),*/
                   ElevatedButton(
                     onPressed: () {
+                      print('✅ 로그인 버튼 눌림');
                       // 로그인 검증 로직 추가 가능
                       Navigator.pushReplacement(
                         context,

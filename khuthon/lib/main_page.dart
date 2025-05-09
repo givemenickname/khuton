@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'post_detail_screen.dart';
+import 'post_create.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -47,6 +48,7 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print('✅ MainScreen 실행됨');
     double menuWidth = MediaQuery.of(context).size.width / 3;
 
     return Scaffold(
@@ -165,7 +167,15 @@ class _MainScreenState extends State<MainScreen> {
                   onPressed: () {},
                   child: Icon(Icons.search),
                 ),
-                FloatingActionButton(onPressed: () {}, child: Icon(Icons.edit)),
+                FloatingActionButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const PostCreatePage()),
+                    );
+                  },
+                  child: const Icon(Icons.edit),
+                ),
               ],
             ),
           ),
