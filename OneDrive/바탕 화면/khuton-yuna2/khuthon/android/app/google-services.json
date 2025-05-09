@@ -1,0 +1,63 @@
+{
+  "project_info": {
+<<<<<<< HEAD
+    "project_number": "701086282184",
+    "project_id": "khukhukhuton",
+    "storage_bucket": "khukhukhuton.firebasestorage.app"
+=======
+    "project_number": "612300351766",
+    "firebase_url": "https://khuthon-ff826-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "khuthon-ff826",
+    "storage_bucket": "khuthon-ff826.firebasestorage.app"
+>>>>>>> abd760b845aae9267f0768f6c37b742bbd7371b2
+  },
+  "client": [
+    {
+      "client_info": {
+<<<<<<< HEAD
+        "mobilesdk_app_id": "1:701086282184:android:1483df3e77594ffaf490fd",
+=======
+        "mobilesdk_app_id": "1:612300351766:android:e96ab2eec90bc7fe9c4837",
+>>>>>>> abd760b845aae9267f0768f6c37b742bbd7371b2
+        "android_client_info": {
+          "package_name": "com.example.khuthon"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+<<<<<<< HEAD
+          "current_key": "AIzaSyDSRJQ5ReB2YnLtpyHFsaNaS6NShmjt6ac"
+=======
+          "current_key": "AIzaSyCKSeT1utCVR7exOwEP10ogUUdVgxqjnhY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:612300351766:android:3933b47e472655cb9c4837",
+        "android_client_info": {
+          "package_name": "com.example.khuton"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCKSeT1utCVR7exOwEP10ogUUdVgxqjnhY"
+>>>>>>> abd760b845aae9267f0768f6c37b742bbd7371b2
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
