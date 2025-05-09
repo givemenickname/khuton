@@ -1,15 +1,15 @@
-import pyrebase
+# app.py
+from flask import Flask, jsonify, request
+from firebase_init import db
 
-const firebaseConfig = {
-  "apiKey": "AIzaSyBcShzZyTXx3R5iuWrhfYdL8FbAz1HMgLI",
-  "authDomain": "new-project-1aae0.firebaseapp.com",
-  "databaseURL": "https://new-project-1aae0-default-rtdb.firebaseio.com",
-  "projectId": "new-project-1aae0",
-  "storageBucket": "new-project-1aae0.appspot.com",
-  "messagingSenderId": "752770395693",
-  "appId": "1:752770395693:web:b78e73190827ab867512a4",
-  "measurementId": "G-T5ES1ZH0PJ"
-};
+app = Flask(__name__)
 
-firebase = pyrebase.initialize_app(firebaseConfig)
-db = firebase.database()
+@app.route('/add-user', methods=['POST'])
+def add_user():
+    data = request.json
+    doc_ref = db.collection('users').document()
+    doc_ref.set(data)
+    return jsonify({'status': 'user added'}), 200
+
+if __name__ == '__main__':
+    app.run(debug=True)
