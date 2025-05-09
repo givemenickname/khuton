@@ -45,6 +45,17 @@ class DBModule:
             return True
         except:
             return False
+    def get_user(self, uid):
+        db = self.firebase.database()
+        try:
+            user_data = db.child("users").child(uid).get()
+            if user_data.val():
+                return user_data.val()  # 딕셔너리 형태로 반환
+            else:
+                return None  # 해당 UID 없음
+        except Exception as e:
+            print(f"사용자 정보 불러오기 실패: {e}")
+            return None
 
     def write_post(self, uid, title, contents, capacity, state, time):
         db = self.firebase.database()
@@ -82,20 +93,23 @@ class DBModule:
             if posts.each():
                 return {post.key(): post.val() for post in posts.each()}
             else:
-                return {}  # 게시글이 하나도 없는 경우
+                return {}  
         except Exception as e:
             print(f"게시글 불러오기 실패: {e}")
             return {}
-
-
-    def get_user(self, uid):
+    def write_comment(self, pid, user, content):
         db = self.firebase.database()
+        comment_data = {
+            "uid": user["localId"],  # 댓글 작성자의 ID
+            "username": user.get("name", "익명"),  # 사용자 이름 (없으면 "익명")
+            "content": content,
+            "timestamp": self._get_timestamp()
+        }
+
         try:
-            user_data = db.child("users").child(uid).get()
-            if user_data.val():
-                return user_data.val()  # 딕셔너리 형태로 반환
-            else:
-                return None  # 해당 UID 없음
+            
+            db.child("posts").child(pid).child("comments").push(comment_data)
+            return True
         except Exception as e:
             print(f"사용자 정보 불러오기 실패: {e}")
             return None
