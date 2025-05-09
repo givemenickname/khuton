@@ -121,7 +121,21 @@ class DBModule:
         except Exception as e:
             print(f"게시글 멤버 불러오기 실패: {e}")
             return None
-        
+    def apply_to_post(self, pid, user):
+        db = self.firebase.database()
+        uid = user["localId"]
+
+        try:
+            db.child("posts").child(pid).child("requests").child(uid).set({
+                "uid": uid,
+                "username": user.get("name", "익명"),
+                "applied_at": self._get_timestamp()
+            })
+            return True
+        except Exception as e:
+            print(f"참가 신청 실패: {e}")
+            return False
+           
     def append_post_member(self, pid, uid):
         db = self.firebase.database()
         try:
@@ -200,20 +214,7 @@ class DBModule:
         except Exception as e:
             print(f"사용자 정보 불러오기 실패: {e}")
             return None
-    def apply_to_post(self, pid, user):
-        db = self.firebase.database()
-        uid = user["localId"]
-
-        try:
-            db.child("posts").child(pid).child("requests").child(uid).set({
-                "uid": uid,
-                "username": user.get("name", "익명"),
-                "applied_at": self._get_timestamp()
-            })
-            return True
-        except Exception as e:
-            print(f"참가 신청 실패: {e}")
-            return False
+    
     
     def search_post(self, keyword):
         db = self.firebase.database()
