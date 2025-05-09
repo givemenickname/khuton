@@ -1,7 +1,14 @@
 from flask import Flask, redirect, render_template, request, url_for, jsonify
 from DB_handler import DBModule
 from flask_cors import CORS
+import firebase_admin
+from firebase_admin import credentials, db
+from flask import Flask, jsonify
+
 DB = DBModule()
+
+cred = credentials.Certificate("firebase-adminsdk.json")
+
 
 app = Flask(__name__)
 CORS(app)
@@ -145,4 +152,4 @@ def calendar_get(pid):
 
 
 if __name__ == "__main__":
-    app.run(host = "0.0.0.0", port=5000, debug=True)
+    app.run(host = "0.0.0.0", port=5030,debug= True)
