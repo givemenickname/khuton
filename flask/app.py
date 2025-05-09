@@ -50,7 +50,11 @@ def signin():
 
 @app.route("/user/<uid>")
 def user(uid):
-    pass
+    data = DB.get_user(uid)
+    if data:
+        return jsonify({"result": "success", "data": data}), 200
+    else:
+        return jsonify({"result": "fail"}), 400
 
 @app.route("/write")
 def write():

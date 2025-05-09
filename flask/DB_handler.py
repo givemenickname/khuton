@@ -54,5 +54,14 @@ class DBModule:
     def post_detail(self, pid):
         pass
 
-    def get_user(self, uid):
-        pass
+    def get_user(self, uid): #데이터 베이스에서 user 정보 받아오기
+        db = self.firebase.database()
+        try:
+            user_data = db.child("users").child(uid).get()
+            if user_data.val():
+                return user_data.val()
+            else:
+                return None 
+        except Exception as e:
+            print(f"Error fetching user data: {e}")
+            return None
