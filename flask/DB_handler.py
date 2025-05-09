@@ -30,7 +30,7 @@ class DBModule:
             uid = user['localId']
             user_data = {
                 "name": name,
-                "email": id,
+                "id": id,
                 "gender" : gender,
                 "birth" : birth,
                 "address" : address,
