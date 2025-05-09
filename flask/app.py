@@ -1,4 +1,4 @@
-from flask import Flask, redirect, render_template, request, url_for
+from flask import Flask, redirect, render_template, request, url_for, jsonify
 from DB_handler import DBModule
 
 DB = DBModule()
@@ -10,7 +10,7 @@ def index():
     pass
 
 
-@app.route("list")
+@app.route("/list")
 def post_list():
     pass
 
@@ -19,22 +19,44 @@ def post():
     pass
 
 @app.route("/login")
-def longin():
-    pass
+def login():
+    data = request.get_json()
+    id = data.get("id")
+    password = data.get("password")
+
+    user = DB.login(id, password)
+    if user:
+        return jsonify({"result": "success", "uid": user['localId']}), 200
+    else:
+        return jsonify({"result": "fail"}), 400
  
-@app.route("/signin")
+@app.route("/signin", methods=["POST"])
 def signin():
-    pass
+    data = request.get_json()
+    id = data.get("id")
+    password = data.get("password")
+    name = data.get("name")
+    gender = data.get("gender")
+    birth = data.get("birth")
+    address = data.get("address")
+    mbti = data.get("mbti", None)
+    plant = data.get("plant", None)
+
+    result = DB.signin(id, password, name, gender, birth, address, mbti, plant)
+    if result:
+        return jsonify({"result": "success"}), 200
+    else:
+        return jsonify({"result": "fail"}), 400
 
 @app.route("/user/<uid>")
-def user():
+def user(uid):
     pass
 
 @app.route("/write")
 def write():
     pass
 
-@app.route("/write_done", methods=["GET"])
+@app.route("/write_done", methods=["POST"])
 def write_done():
     pass
 
