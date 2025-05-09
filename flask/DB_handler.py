@@ -70,4 +70,10 @@ class DBModule:
         pass
 
     def get_user(self, uid):
-        pass
+        db = self.firebase.database()
+        try:
+            user_data = db.child("users").child(uid).get().val()
+            return user_data
+        except Exception as e:
+            print(f"Failed to get user data: {e}")
+            return None
