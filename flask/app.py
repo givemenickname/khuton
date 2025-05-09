@@ -10,6 +10,14 @@ CORS(app)
 def index():
     pass
 
+@app.route("/posts") # 모든 게시글 가져오기
+def get_posts():
+    posts = DB.get_post()
+    if posts:
+        return jsonify({"result": "success", "data": posts}), 200
+    else:
+        return jsonify({"result": "fail"}), 400
+
 @app.route("/post/<int:pid>") #pid 기반으로 게시글 정보 가져오기
 def post(pid):
     data = DB.get_post_by_pid(pid)

@@ -1,8 +1,28 @@
 import 'package:flutter/material.dart';
 import 'main_page.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class PostCreatePage extends StatelessWidget {
   const PostCreatePage({super.key});
+
+  void _showDialog(BuildContext context, String title, String message) {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: Text(title),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text("확인"),
+          )
+        ],
+      ),
+    );
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -18,11 +38,7 @@ class PostCreatePage extends StatelessWidget {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () {
-            Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (_) => MainScreen()),
-              (route) => false,
-            );
+            Navigator.pop(context);
           },
         ),
       ),
@@ -76,11 +92,43 @@ class PostCreatePage extends StatelessWidget {
                 ),
                 const SizedBox(width: 12),
                 ElevatedButton(
-                  onPressed: () {
-                    // TODO: 글 등록 처리
-                    print("📨 글 등록됨");
-                    Navigator.pop(context);
-                  },
+                  onPressed: () async {
+                  final title = titleController.text.trim();
+                  final contents = contentController.text.trim();
+                  final capacity = maxPeopleController.text.trim();
+
+                  final prefs = await SharedPreferences.getInstance();
+                  final uid = prefs.getString('uid');
+              
+
+                  final url = Uri.parse("http://172.21.110.186:5000/write"); // 실제 Flask 서버 IP로 변경
+                  try {
+                    final response = await http.post(
+                      url,
+                      headers: {"Content-Type": "application/json"},
+                      body: json.encode({
+                        "uid": uid,
+                        "title": title,
+                        "contents": contents,
+                        "capacity": capacity,
+                        "state": "open",
+                        "people": "0/$capacity명",
+                      }),
+                    );
+
+                    if (response.statusCode == 200) {
+                      print("✅ 글 작성 성공: ${response.body}");
+                      Navigator.pop(context, true); // 글 작성 후 이전 화면으로 돌아가기
+                    } else {
+                      print("❌ 글 작성 실패: ${response.body}");
+                      _showDialog(context, "등록 실패", "입력값을 다시 확인해주세요.");
+                    }
+                  } catch (e) {
+                    print("🚨 네트워크 에러: $e");
+                    _showDialog(context, "에러", "서버에 연결할 수 없습니다.");
+                  }
+                },
+
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
                     elevation: 2,

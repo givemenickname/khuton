@@ -1,6 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:khuthon/post_create.dart';
 import 'post_detail_screen.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class MainScreen extends StatefulWidget {
   @override
@@ -19,15 +22,42 @@ class _MainScreenState extends State<MainScreen> {
     'assets/img_01.png',
   ];
 
-  final List<Map<String, String>> posts = [
+  /*final List<Map<String, String>> posts = [
     {"title": "○○동 ○○텃밭에서 같이 배추 재배할 사람들 구해요!", "people": "12/20명"},
     {"title": "□□빌딩 옥상에서 방울토마토 재배해요", "people": "2/5명"},
     {"title": "같이 잘 키워봅시다", "people": "9/25명"},
-  ];
+  ];*/
+
+  List<Map<String, dynamic>> _posts = [];
+
+  Future<void> fetchPosts() async {
+    final url = Uri.parse("http://172.21.110.186:5000/posts"); // IP 수정!
+    try {
+      final response = await http.get(url);
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        final postData = data['data'] as Map<String, dynamic>;
+        setState(() {
+          _posts = postData.entries.map((entry) {
+            return {
+              "id": entry.key,
+              "title": entry.value['title'],
+              "people": entry.value['people'],
+            };
+          }).toList().reversed.toList(); // 최신 글이 위에
+        });
+      } else {
+        print("불러오기 실패: ${response.body}");
+      }
+    } catch (e) {
+      print("에러 발생: $e");
+    }
+  }
 
   @override
   void initState() {
     super.initState();
+    fetchPosts();
     _timer = Timer.periodic(Duration(seconds: 3), (Timer timer) {
       _pageController.nextPage(
         duration: Duration(milliseconds: 500),
@@ -76,22 +106,17 @@ class _MainScreenState extends State<MainScreen> {
               ),
               Expanded(
                 child: ListView.builder(
-                  padding: const EdgeInsets.only(bottom: 80),
-                  itemCount: posts.length,
+                  itemCount: _posts.length,
                   itemBuilder: (context, index) {
+                    final post = _posts[index];
                     return Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 8,
-                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                       child: GestureDetector(
                         onTap: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (_) => PostDetailScreen(
-                                title: posts[index]['title']!,
-                              ),
+                              builder: (_) => PostDetailScreen(title: post['title']),
                             ),
                           );
                         },
@@ -106,38 +131,26 @@ class _MainScreenState extends State<MainScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                posts[index]['title']!,
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                                post['title'],
+                                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                               ),
                               SizedBox(height: 10),
                               Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    "인원 ${posts[index]['people']}",
+                                    "인원 ${post['people']}",
                                     style: TextStyle(color: Colors.grey[700]),
                                   ),
                                   Container(
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: 10,
-                                      vertical: 6,
-                                    ),
+                                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                                     decoration: BoxDecoration(
-                                      border: Border.all(
-                                        color: Colors.grey.shade400,
-                                      ),
+                                      border: Border.all(color: Colors.grey.shade400),
                                       borderRadius: BorderRadius.circular(6),
                                     ),
                                     child: Text(
                                       "모집 중",
-                                      style: TextStyle(
-                                        fontSize: 13,
-                                        color: Colors.black87,
-                                      ),
+                                      style: TextStyle(fontSize: 13, color: Colors.black87),
                                     ),
                                   ),
                                 ],
@@ -147,8 +160,8 @@ class _MainScreenState extends State<MainScreen> {
                         ),
                       ),
                     );
-                  },
-                ),
+                  }
+                )
               ),
             ],
           ),
@@ -163,7 +176,16 @@ class _MainScreenState extends State<MainScreen> {
                   onPressed: () {},
                   child: Icon(Icons.search),
                 ),
-                FloatingActionButton(onPressed: () {}, child: Icon(Icons.edit)),
+                FloatingActionButton(onPressed: () async {
+                  final result = await Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => PostCreatePage()),
+                  );
+
+                  if (result == true) {
+                    fetchPosts();  // ✅ 다시 게시글 불러오기
+                  }
+                }, child: Icon(Icons.edit)),
               ],
             ),
           ),

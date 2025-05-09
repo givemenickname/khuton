@@ -64,34 +64,33 @@ class DBModule:
             print(f"사용자 정보 불러오기 실패: {e}")
             return None
 
-    def write_post(self, uid, title, contents, capacity, state, time):
+    def write_post(self, uid, title, contents, capacity, state):
         db = self.firebase.database()
-
         try:
             post_data = {
-            "title" : title,
-            "contents": contents,
-            "capacity": capacity,
-            "state": state,
-            "author_uid": uid,
-            "timestamp": time.time(),
-            "comment": [],
+                "title": title,
+                "contents": contents,
+                "capacity": capacity,
+                "state": state,
+                "author_uid": uid,
+                "comment": [],
+                "people": f"0/{capacity}명",
             }
+
             new_post_ref = db.child("posts").push(post_data)
             pid = new_post_ref['name']
 
+            # 게시글에 pid 추가
             db.child("posts").child(pid).update({"pid": pid})
 
-            user_posts_reg = db.child("users").child(uid).child("posts")
-            user_posts = user_posts_reg.get().val()
-            if user_posts is None:
-                user_posts = []
-            user_posts.append(pid)
-            user_posts_reg.set(user_posts)
+            # 🔥 여기 중요! 사용자 posts에 덮어쓰지 말고 update로 추가
+            db.child("users").child(uid).child("posts").update({pid: True})
+
             return pid
         except Exception as e:
             print(f"Failed to write post: {e}")
             return None
+
 
     def get_post(self): #전체 게시글 불러오기
         db = self.firebase.database()
