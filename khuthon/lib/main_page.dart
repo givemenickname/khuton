@@ -13,10 +13,10 @@ class _MainScreenState extends State<MainScreen> {
   bool _isMenuOpen = false;
 
   final List<String> imagePaths = [
-    'assets/0e2b5241-7944-4f4d-833a-1b103b20eac6.png',
-    'assets/5dbc0dd3-2415-427a-b27d-96e755229e6b.png',
-    'assets/256ec655-fcc8-4fca-a4cc-9c5bd84fe622.png',
-    'assets/img_01.png',
+    'assets/images/0e2b5241-7944-4f4d-833a-1b103b20eac6.png',
+    'assets/images/5dbc0dd3-2415-427a-b27d-96e755229e6b.png',
+    'assets/images/256ec655-fcc8-4fca-a4cc-9c5bd84fe622.png',
+    'assets/images/img_01.png',
   ];
 
   final List<Map<String, String>> posts = [
