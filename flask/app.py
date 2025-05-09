@@ -19,7 +19,7 @@ def post(pid):
         return jsonify({"result": "fail"}), 400
 
 
-@app.route("/login", methods = []) # 로그인
+@app.route("/login", methods = ["POST"]) # 로그인
 def login():
     data = request.get_json()
     id = data.get("id")
