@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class PostDetailScreen extends StatefulWidget {
   final String title;
 
-  const PostDetailScreen({required this.title});
+  const PostDetailScreen({super.key, required this.title});
 
   @override
   State<PostDetailScreen> createState() => _PostDetailScreenState();

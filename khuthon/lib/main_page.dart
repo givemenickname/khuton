@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'post_detail_screen.dart';
 
 class MainScreen extends StatefulWidget {
+  const MainScreen({super.key});
+
   @override
   _MainScreenState createState() => _MainScreenState();
 }
@@ -64,7 +66,7 @@ class _MainScreenState extends State<MainScreen> {
         children: [
           Column(
             children: [
-              Container(
+              SizedBox(
                 height: 200,
                 child: PageView.builder(
                   controller: _pageController,

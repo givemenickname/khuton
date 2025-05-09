@@ -6,6 +6,7 @@ class SplashScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print('✅ SplashScreen 실행됨');
     Future.delayed(Duration(seconds: 2), () {
       Navigator.pushReplacement(
         context,

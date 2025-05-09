@@ -10,6 +10,7 @@ class LoginPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print('✅ LoginPage 실행됨');
     return Scaffold(
       backgroundColor: Color(0xFFD7EEC6),
       body: Center(

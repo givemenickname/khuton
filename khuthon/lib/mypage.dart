@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'edit_profile.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -34,7 +35,19 @@ class ProfilePage extends StatelessWidget {
                         style: TextStyle(
                             fontSize: 20, fontWeight: FontWeight.bold)),
                     SizedBox(height: 4),
-                    Text('프로필 수정', style: TextStyle(color: Colors.grey[700])),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (_) => EditProfilePage()),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.lightGreen[200],
+                        minimumSize: Size.fromHeight(40),
+                      ),
+                      child: Text('프로필 수정'),
+                    ),
                   ],
                 ),
               ],
