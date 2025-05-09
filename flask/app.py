@@ -9,14 +9,14 @@ app = Flask(__name__)
 def index():
     pass
 
-
-@app.route("/list")
-def post_list():
-    pass
-
 @app.route("/post/<int:pid>")
-def post():
-    pass
+def post(pid):
+    data = DB.get_post(pid)
+    if data:
+        return jsonify({"result": "success", "data": data}), 200
+    else:
+        return jsonify({"result": "fail"}), 400
+
 
 @app.route("/login")
 def login():
