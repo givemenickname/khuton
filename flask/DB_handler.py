@@ -64,10 +64,17 @@ class DBModule:
 
 
     def get_post(self):
-        pass
+        db = self.firebase.database()
+        try:
+            posts = db.child("posts").get()
+            if posts.each():
+                return {post.key(): post.val() for post in posts.each()}
+            else:
+                return {}  # 게시글이 하나도 없는 경우
+        except Exception as e:
+            print(f"게시글 불러오기 실패: {e}")
+            return {}
 
-    def post_detail(self, pid):
-        pass
 
     def get_user(self, uid):
         db = self.firebase.database()
@@ -79,4 +86,4 @@ class DBModule:
                 return None  # 해당 UID 없음
         except Exception as e:
             print(f"사용자 정보 불러오기 실패: {e}")
-        return None
+            return None
