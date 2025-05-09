@@ -9,14 +9,14 @@ app = Flask(__name__)
 def index():
     pass
 
-
-@app.route("/list")
-def post_list():
-    pass
-
 @app.route("/post/<int:pid>")
-def post():
-    pass
+def post(pid):
+    data = DB.get_post(pid)
+    if data:
+        return jsonify({"result": "success", "data": data}), 200
+    else:
+        return jsonify({"result": "fail"}), 400
+
 
 @app.route("/login")
 def login():
@@ -59,21 +59,16 @@ def user(uid):
 @app.route("/write", methods=["POST"])
 def write():
     data = request.get_json()
-    author_uid = data.get("author_uid")
+    uid = data.get("uid")
     title = data.get("title")
     contents = data.get("contents")
     capacity = data.get("capacity")
     state = data.get("state", "open")
-    timestamp = data.get("timestamp", None)
-    pid = DB.write_post(author_uid, title, contents, capacity, state, timestamp)
+    pid = DB.write_post(uid, title, contents, capacity, state)
     if pid:
         return jsonify({"result": "success", "pid": pid}), 200
     else:
         return jsonify({"result": "fail"}), 400
-
-@app.route("/write_done", methods=["POST"])
-def write_done():
-    pass
 
 if __name__ == "__main__":
     app.run(host = "0.0.0.0", debug=True)
