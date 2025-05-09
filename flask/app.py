@@ -69,6 +69,16 @@ def write():
         return jsonify({"result": "success", "pid": pid}), 200
     else:
         return jsonify({"result": "fail"}), 400
+    
+@app.route("/search", methods=["POST"])
+def search():
+    data = request.get_json()
+    keyword = data.get("keyword")
+    posts = DB.search_post(keyword)
+    if posts:
+        return jsonify({"result": "success", "posts": posts}), 200
+    else:
+        return jsonify({"result": "fail"}), 400
 
 if __name__ == "__main__":
     app.run(host = "0.0.0.0", debug=True)

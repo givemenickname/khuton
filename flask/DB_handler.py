@@ -99,3 +99,19 @@ class DBModule:
         except Exception as e:
             print(f"사용자 정보 불러오기 실패: {e}")
             return None
+
+    def search_post(self, keyword):
+        db = self.firebase.database()
+        try:
+            posts = db.child("posts").get()
+            if posts.each():
+                result = {}
+                for post in posts.each():
+                    if keyword in post.val()["title"]:
+                        result[post.key()] = post.val()
+                return result
+            else:
+                return {}  # 게시글이 하나도 없는 경우
+        except Exception as e:
+            print(f"게시글 검색 실패: {e}")
+            return {}
