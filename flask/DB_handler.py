@@ -63,11 +63,20 @@ class DBModule:
 
 
 
-    def post_list(self):
+    def get_post(self):
         pass
 
     def post_detail(self, pid):
         pass
 
     def get_user(self, uid):
-        pass
+        db = self.firebase.database()
+        try:
+            user_data = db.child("users").child(uid).get()
+            if user_data.val():
+                return user_data.val()  # 딕셔너리 형태로 반환
+            else:
+                return None  # 해당 UID 없음
+        except Exception as e:
+            print(f"사용자 정보 불러오기 실패: {e}")
+        return None
