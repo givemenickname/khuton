@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -117,9 +119,65 @@ class _RegisterPageState extends State<RegisterPage> {
             SizedBox(height: 24),
             Center(
               child: ElevatedButton(
-                onPressed: () {
-                  print("가입 정보: 아이디=${idController.text}, MBTI=$fullMBTI");
+                onPressed: () async {
+                  final id = idController.text.trim();
+                  final pw = pwController.text.trim();
+                  final name = nameController.text.trim();
+                  final address = addressController.text.trim();
+                  final plant = cropController.text.trim();
+                  final birth = "$year-$month-$day";
+
+                  final url = Uri.parse("http://172.21.110.186:5000/signin");
+
+                  final response = await http.post(
+                    url,
+                    headers: {"Content-Type": "application/json"},
+                    body: jsonEncode({
+                      "id": id,
+                      "password": pw,
+                      "name": name,
+                      "gender": gender,
+                      "birth": birth,
+                      "address": address,
+                      "mbti": fullMBTI,
+                      "plant": plant,
+                    }),
+                  );
+
+                  final result = jsonDecode(response.body);
+                  if (response.statusCode == 200 && result["result"] == "success") {
+                    showDialog(
+                      context: context,
+                      builder: (_) => AlertDialog(
+                        title: Text("회원가입 성공"),
+                        actions: [
+                          TextButton(
+                            child: Text("확인"),
+                            onPressed: () {
+                              Navigator.pop(context);       // dialog 닫기
+                              Navigator.pop(context);       // 회원가입 페이지 닫고 로그인으로
+                            },
+                          ),
+                        ],
+                      ),
+                    );
+                  } else {
+                    showDialog(
+                      context: context,
+                      builder: (_) => AlertDialog(
+                        title: Text("오류"),
+                        content: Text(result["message"] ?? "회원가입 실패"),
+                        actions: [
+                          TextButton(
+                            child: Text("확인"),
+                            onPressed: () => Navigator.pop(context),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
                 },
+
                 child: Text('완료'),
               ),
             ),
