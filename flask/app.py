@@ -70,9 +70,5 @@ def write():
     else:
         return jsonify({"result": "fail"}), 400
 
-@app.route("/write_done", methods=["POST"])
-def write_done():
-    pass
-
 if __name__ == "__main__":
     app.run(host = "0.0.0.0", debug=True)
