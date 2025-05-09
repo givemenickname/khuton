@@ -46,22 +46,26 @@ class DBModule:
         except:
             return False
 
-    def write_post(self, uid, title, contents, capacity):
-        post_data = {
-            "uid": uid,
+    def write_post(self, uid, title, contents, capacity, state, time):
+        db = self.firebase.database()
+
+        try:
+            post_data = {
             "title" : title,
             "contents": contents,
             "capacity": capacity,
-            "createdAt": datetime.datetime.now().isoformat()
-        }
+            "state": state,
+            "author_uid": uid,
+            "timestamp": time.time(),
+            }
+            new_post_ref = db.child("posts").push(post_data)
+            pid = new_post_ref['name']
 
-        try:
-            self.db.child("posts").push(post_data)
-            print("Post successfully written.")
+            db.child("posts").child(pid).update({"pid": pid})
+            return pid
         except Exception as e:
             print(f"Failed to write post: {e}")
-
-
+            return None
 
     def get_post(self):
         db = self.firebase.database()
