@@ -13,7 +13,7 @@ class _SearchPageState extends State<SearchPage> {
   List<dynamic> _results = [];
 
   Future<void> _fetchSearchResults(String keyword) async {
-    final url = Uri.parse('http://ip:5000/search?keyword=$keyword'); // ← 자신의 PC IP로 변경
+    final url = Uri.parse('http://172.21.65.64:5000/search?keyword=$keyword'); // ← 자신의 PC IP로 변경
     try {
       final response = await http.get(url);
       if (response.statusCode == 200) {
