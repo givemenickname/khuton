@@ -5,6 +5,7 @@ import 'screens/my_post_detail_screen.dart';
 import 'post_create.dart';
 import 'notification_page.dart';
 import 'screens/chat_list_page.dart';
+import 'mypage.dart';
 
 void main() => runApp(MyApp());
 
@@ -264,9 +265,15 @@ class _MainScreenState extends State<MainScreen> {
                   IconButton(
                     icon: Icon(Icons.person),
                     iconSize: 30,
-                    tooltip: '마이페이지',
+                    tooltip: '알림',
                     onPressed: () {
-                      print('마이페이지 아이콘 클릭됨');
+                      setState(() {
+                        _isMenuOpen = false; // 메뉴 닫기
+                      });
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const ProfilePage()),
+                      );
                     },
                   ),
                 ],
